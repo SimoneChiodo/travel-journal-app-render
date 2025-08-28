@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta th:field="*{viewport}" content="width=device-width, initial-scale=1.0" />
+    <title>Travels</title>
+
+    <!-- FAVICON -->
+    <link rel="icon" th:href="@{/img/favicon.ico}" type="image/x-icon" />
+
+    <!-- IMPORT CSS -->
+    <th:block th:replace="~{fragments :: import-css}"></th:block>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <th:block th:replace="~{fragments :: navbar('home')}"></th:block>
+    </header>
+
+    <!-- Main -->
+    <main class="container my-5">
+      <!-- Filters -->
+      <div class="accordion mb-4" id="accordionFilter">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+              Filters & Sorting
+            </button>
+          </h2>
+          <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFilter">
+            <form class="row p-4 g-3" th:action="@{/home}" method="POST">
+              <!-- Strength Rating -->
+              <div class="col-12">
+                <h4 class="m-0">
+                  Filters
+                  <i class="fa-solid fa-filter"></i>
+                </h4>
+              </div>
+
+              <!-- Place -->
+              <div class="col-12">
+                <label for="place" class="form-label fw-semibold">Place</label>
+                <input type="text" id="place" class="form-control" th:name="search_place" th:value="${search_place}" />
+              </div>
+              
+              <!-- Cost -->
+              <div class="col-md-6">
+                <label for="feelings" class="form-label fw-semibold">Maximum Cost</label>
+                <input type="number" id="feelings" class="form-control" th:name="search_cost" th:value="${search_cost}" step="0.01" min="0" />
+              </div>
+
+              <!-- Date -->
+              <div class="col-md-6">
+                <label for="feelings" class="form-label fw-semibold">Starting from this Date</label>
+                <input type="date" id="feelings" class="form-control" th:name="search_date" th:value="${search_date}" />
+              </div>
+
+              <!-- Strength Rating -->
+              <div class="col-md-6">
+                <label for="feelings" class="form-label fw-semibold">Maximum Strength Rating (1-5)</label>
+                <input type="number" id="feelings" class="form-control" th:name="search_strength_rating" th:value="${search_strength_rating}" min="1" max="5" />
+              </div>
+
+              <!-- Monetary Rating -->
+              <div class="col-md-6">
+                <label for="feelings" class="form-label fw-semibold">Maximum Monetary Rating (1-5)</label>
+                <input type="number" id="feelings" class="form-control" th:name="search_monetary_rating" th:value="${search_monetary_rating}" min="1" max="5" />
+              </div>
+
+              <!-- Tags -->
+              <div class="col-12">
+                <label class="form-label fw-semibold">Tags</label>
+                <p th:if="${tags.size() == 0}" class="m-0">No tags available</p>
+                
+                <div class="d-flex flex-wrap gap-3">
+                  <div th:each="tag : ${tags}" class="form-check">
+                    <input class="form-check-input" type="checkbox" th:id="${'tag-' + tag.id}" th:name="search_tags" th:value="${tag.id}" th:checked="${search_tags.contains(tag.id)}" />
+                    <label class="form-check-label" th:for="${'tag-' + tag.id}"><span class="badge" th:text="${tag.name}" th:style="'background-color:' + ${tag.hexColor}"></span></label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Title -->
+              <div class="col-12">
+                <h4 class="mt-3">
+                  Sort
+                  <i class="fa-solid fa-arrow-up-wide-short"></i>
+                </h4>
+              </div>
+
+              <!-- Order By -->
+              <div class="col-md-6">
+                <label for="orderDropdown" class="form-label fw-semibold">Order By</label>
+                <select id="orderDropdown" name="orderBy" class="form-select ">
+                  <option value="" th:selected="${orderBy == ''}">Default</option>
+                  <option value="cost" th:selected="${orderBy == 'cost'}">Cost</option>
+                  <option value="date" th:selected="${orderBy == 'date'}">Date</option>
+                  <option value="strengthRating" th:selected="${orderBy == 'strengthRating'}">Strength Rating</option>
+                  <option value="monetaryRating" th:selected="${orderBy == 'monetaryRating'}">Monetary Rating</option>
+                </select>
+              </div>
+
+              <!-- Sort By -->
+              <div class="col-md-6">
+                <label for="sortDropdown" class="form-label fw-semibold">Sort By</label>
+                <select id="sortDropdown" name="sortBy" class="form-select ">
+                  <option value="asc" th:selected="${sortBy == 'asc'}">ASC</option>
+                  <option value="desc" th:selected="${sortBy == 'desc'}">DESC</option>
+                </select>
+              </div>
+
+              <!-- SUBMIT -->
+              <div class="col-12 text-center mt-4">
+                <button class="btn btn-primary px-5" type="submit">
+                  Search
+                  <i class="fa-solid fa-magnifying-glass ms-1 fs-sm"></i>
+                </button>
+              </div>
+              <!-- CLEAN FILTERS -->
+              <div class="col-12 text-center">
+                <a href="/home" class="btn btn-sm btn-warning px-3">Clear Filters</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Travels Saved Message -->
+      <div th:if="${travels.size() == 0}" class="text-center">
+        <h2 class="display-4 mb-3">No Travels saved</h2>
+        <a class="btn btn-outline-success btn-lg" th:href="@{/travel/create}">
+          <i class="fa-solid fa-plus fa-xs"></i>
+          Add Travel
+        </a>
+      </div>
+
+      <!-- Travel List -->
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+        <div class="col" th:each="travel : ${travels}" th:object="${travel}">
+          <div class="card card-travel h-100 hover-pointer hover-shadow" th:onclick="|window.location.href='@{/travel/{id}(id=*{id})}'|">
+            <img th:if="*{photos.size() > 0}"  th:src="*{photos[0]}" class="card-img-top" alt="..." draggable="false">
+
+            <div class="card-body">
+              <div class="description-container d-flex flex-column h-100">
+                <!-- Date, Cost, Place -->
+                <div class="top-part flex-grow-1 mb-3">
+                  <div class="d-flex justify-content-between">
+                    <p class="card-text fw-bold m-0" th:text="*{date}"></p>
+                    <p class="card-text fw-bold" th:text="|€ *{cost}|"></p>
+                  </div>
+
+                  <p class="card-text fw-semibold" th:text="*{place}"></p>
+                </div>  
+                
+                <!-- Rating, Tags -->
+                <div class="bottom-part">
+                  <div class="d-flex justify-content-between mb-2">
+                    <p class="card-text m-0"
+                      th:with="pos=${#strings.repeat(&quot;<i class='fa-solid fa-hand-fist me-1'></i>&quot;, travel.strengthRating)}, neg=${#strings.repeat(&quot;<i class='fa-solid fa-hand-fist deselected me-1'></i>&quot;, 5 - travel.strengthRating)}" 
+                      th:utext="${pos + neg}"></p>
+                    <p class="card-text m-0"
+                      th:with="pos=${#strings.repeat(&quot;<i class='fa-solid fa-dollar-sign me-1'></i>&quot;, travel.monetaryRating)}, neg=${#strings.repeat(&quot;<i class='fa-solid fa-dollar-sign deselected me-1'></i>&quot;, 5 - travel.monetaryRating)}" 
+                      th:utext="${pos + neg}"></p>
+                  </div>
+
+                  <p class="mb-1">Tags:</p>
+                  <span class="badge fs-6" th:text="${tag.name}" th:each="tag : *{tags}" th:style="'background-color:' + ${tag.hexColor}"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

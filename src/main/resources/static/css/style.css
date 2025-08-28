@@ -1,0 +1,100 @@
+:root {
+  --header-height: 56px; 
+}
+
+/* UTILITIES */
+/* Hover */
+.hover-pointer {
+  cursor: pointer;
+}
+
+.hover-shadow {
+  transition: box-shadow 0.3s ease-out, transform 0.2s ease-in-out;
+}
+.hover-shadow:hover {
+  box-shadow: 0 0 13px 6px lightgray;
+  transform: scale(1.05);
+  transition: box-shadow 0.2s ease-in-out, transform 0.3s ease-in-out;
+}
+.hover-shadow-sm {
+  transition: box-shadow 0.3s ease-out;
+}
+.hover-shadow-sm:hover {
+  box-shadow: 0 0 5px 3px lightgray;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.blue-hover:hover {
+  color: #0a58ca;
+}
+.red-hover:hover {
+  color: #dc3545;
+}
+
+/* Height */
+.vh-100 {
+  height: 100vh;
+}
+
+.vh-100-without-header {
+  height: calc(100vh - var(--header-height)); 
+}
+
+/* Index */
+.z-1000 {
+  z-index: 1000;
+}
+
+/* Color */
+.deselected {
+  opacity: 0.5;
+}
+
+/* Link */
+.transparent-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* List-Item */
+.li-border-gray li,
+.li-border-gray {
+  border-color: #b4b6b9;
+}
+
+/* COMPONENTS */
+/* Accordion (Travel List Page) */
+.accordion-button,
+.accordion-button:focus {
+  background-color: inherit !important;
+  box-shadow: none !important;
+}
+
+/* Carousel (Travel Details Page) */
+.carousel-item {
+  transition: transform 0s; /* Slide duration */
+}
+
+#carousel .carousel-indicators.custom-thumbnails {
+  gap: 0.5rem;
+}
+
+#carousel .carousel-indicators.custom-thumbnails button {
+  width: 80px;
+  height: 80px;
+  background: none;
+}
+
+/* Travel Card (Travel List Page) */
+.card-travel img {
+  height: 170px;
+  object-fit: cover;
+}
+
+/* RESPONSIVE */
+@media screen and (min-width: 992px) {
+  #carousel,
+  .travel-details {
+    width: 50% !important;
+  }
+}

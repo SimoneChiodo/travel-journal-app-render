@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta th:field="*{viewport}" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${isCreate} ? 'Create Tag' : 'Edit Tag'"></title>
+
+    <!-- FAVICON -->
+    <link rel="icon" th:href="@{/img/favicon.ico}" type="image/x-icon" />
+
+    <!-- IMPORT CSS -->
+    <th:block th:replace="~{fragments :: import-css}"></th:block>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="mb-5">
+      <th:block th:replace="~{fragments :: navbar('addTag')}"></th:block>
+    </header>
+
+    <!-- Main -->
+    <main class="container my-5">
+      <!-- FORM -->
+      <form class="row g-3" th:action="${isCreate} ? @{/tag/create} : @{/tag/edit/{id}(id=*{id})}" th:object="${tag}" method="POST">
+        <!-- Name -->
+        <div class="col-12">
+          <label for="name" class="form-label fs-5 fw-semibold">Name</label>
+          <input type="text" id="name" class="form-control" th:field="*{name}" required
+            th:classappend="${#fields.hasErrors('name')} ? ' is-invalid' : ''" />
+          
+          <!-- Error message if the name is already taken -->
+          <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+        </div>
+
+        <!-- Color -->
+        <div class="col-12">
+          <label for="hexColor" class="form-label fs-5 fw-semibold">Color</label>
+          <input type="color" id="hexColor" class="form-control form-control-color" value="#563d7c" th:field="*{hexColor}" />
+        </div>
+
+        <!-- SUBMIT -->
+        <div class="col-12 text-center">
+          <button class="btn btn-lg btn-primary px-5" type="submit">Confirm</button>
+        </div>
+      </form>
+    </main>
+  </body>
+</html>
